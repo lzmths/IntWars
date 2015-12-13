@@ -71,6 +71,7 @@ int
 enet_address_set_host (ENetAddress * address, const char * name)
 {
     struct hostent * hostEntry = NULL;
+    int convert_test;
 #ifdef HAS_GETHOSTBYNAME_R
     struct hostent hostData;
     char buffer [2048];
@@ -89,10 +90,11 @@ enet_address_set_host (ENetAddress * address, const char * name)
         hostEntry -> h_addrtype != AF_INET)
     {
 #ifdef HAS_INET_PTON
-        if (! inet_pton (AF_INET, name, & address -> host))
+        convert_test = ! inet_pton (AF_INET, name, & address -> host);
 #else
-        if (! inet_aton (name, (struct in_addr *) & address -> host))
+        convert_test = ! inet_aton (name, (struct in_addr *) & address -> host);
 #endif
+        if (convert_test)
             return -1;
         return 0;
     }
